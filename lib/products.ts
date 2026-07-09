@@ -13,17 +13,12 @@ export interface Product {
 }
 
 export const filterColors = [
-  'Multicolor', 'Sky Blue', 'Mint', 'Biscuit', 'Slate Blue',
-  'Pastel Orange', 'Off White', 'Blue', 'Black', 'Navy', 'Green', 'Grey', 'White', 'Cream',
+  'Black', 'White', 'Navy', 'Grey'
 ];
 
 export const filterPriceRanges = [
-  { label: '100 To 300', min: 100, max: 300 },
-  { label: '301 To 500', min: 301, max: 500 },
-  { label: '501 To 1000', min: 501, max: 1000 },
+  { label: '400 To 1000', min: 400, max: 1000 },
   { label: '1001 To 2500', min: 1001, max: 2500 },
-  { label: '2501 To 5000', min: 2501, max: 5000 },
-  { label: '5001 To 10000', min: 5001, max: 10000 },
 ];
 
 export const filterSizes = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -64,7 +59,7 @@ export const products: Product[] = [
     originalPrice: '৳2,690',
     discount: '18%',
     image: '/assets/tshirt3.jpg',
-    categories: ['man', 'tshirt', 'inspiro-edition', 'summer'],
+    categories: ['man', 'tshirt', 'remeet-edition', 'summer'],
     colors: ['Grey', 'Multicolor'],
     sizes: ['S', 'M', 'L', 'XL'],
   },
@@ -185,10 +180,10 @@ export const categories: Record<string, CategoryInfo> = {
     description: 'Relaxed dropshoulder silhouettes for the ultimate streetwear vibe.',
     banner: '/assets/heroModels.png',
   },
-  'inspiro-edition': {
-    slug: 'inspiro-edition',
-    title: 'Inspiro Edition',
-    description: 'Limited edition pieces designed exclusively by Inspiro. Bold, unique, and unapologetically original.',
+  'remeet-edition': {
+    slug: 'remeet-edition',
+    title: 'reMeet Edition',
+    description: 'Limited edition pieces designed exclusively by reMeet. Bold, unique, and unapologetically original.',
     banner: '/assets/heroModels.png',
   },
   'sports-tshirt': {

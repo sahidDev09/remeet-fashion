@@ -22,7 +22,7 @@ const Marquee = () => {
           <div key={i} className="flex items-center">
             <span>FASHION</span>
             <SparkleIcon />
-            <span>INSPIRO</span>
+            <span>REMEET</span>
             <SparkleIcon />
             <span>COMFORT</span>
             <SparkleIcon />

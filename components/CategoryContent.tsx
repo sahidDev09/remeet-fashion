@@ -90,8 +90,8 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
 
   return (
     <div className="flex gap-8 lg:gap-10">
-      {/* ─── Left Sidebar Filters ─── */}
-      <aside className="hidden md:block w-[220px] lg:w-[240px] flex-shrink-0 sticky top-28 self-start">
+      {/* ─── Left Sidebar Filters (Fixed) ─── */}
+      <aside className="hidden md:block w-[220px] lg:w-[240px] flex-shrink-0 sticky top-28 self-start h-[calc(100vh-120px)] overflow-hidden">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-black">
             Filter By
@@ -111,7 +111,7 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
           <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-black/80 mb-4 pb-2 border-b border-black/10">
             Color
           </h3>
-          <div className="space-y-2.5 max-h-[240px] overflow-y-auto pr-2 scrollbar-thin">
+          <div className="space-y-2.5">
             {filterColors.map((color) => (
               <label
                 key={color}
@@ -133,6 +133,13 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
                 <span className="text-[13px] text-black/70 group-hover:text-black transition-colors">
                   {color}
                 </span>
+                {/* Hidden input for accessibility */}
+                <input
+                  type="checkbox"
+                  className="hidden"
+                  checked={selectedColors.includes(color)}
+                  onChange={() => toggleFilter(color, selectedColors, setSelectedColors)}
+                />
               </label>
             ))}
           </div>
@@ -165,6 +172,12 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
                 <span className="text-[13px] text-black/70 group-hover:text-black transition-colors">
                   {range.label}
                 </span>
+                <input
+                  type="checkbox"
+                  className="hidden"
+                  checked={selectedPriceRanges.includes(range.label)}
+                  onChange={() => toggleFilter(range.label, selectedPriceRanges, setSelectedPriceRanges)}
+                />
               </label>
             ))}
           </div>
@@ -197,6 +210,12 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
                 <span className="text-[13px] text-black/70 group-hover:text-black transition-colors">
                   {size}
                 </span>
+                <input
+                  type="checkbox"
+                  className="hidden"
+                  checked={selectedSizes.includes(size)}
+                  onChange={() => toggleFilter(size, selectedSizes, setSelectedSizes)}
+                />
               </label>
             ))}
           </div>
@@ -206,7 +225,7 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
       {/* ─── Right Content: Sort + Product Grid ─── */}
       <div className="flex-1 min-w-0">
         {/* Sort bar */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 flex-shrink-0">
           <p className="text-xs font-mono tracking-wider text-black/40 uppercase">
             {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
           </p>
@@ -233,129 +252,99 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
           </div>
         </div>
 
-        {/* Product Grid — 3 columns like screenshot */}
-        {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="group bg-white rounded-2xl border border-black/5 overflow-hidden hover:shadow-lg hover:shadow-black/5 transition-all duration-300"
-              >
-                {/* Product Image */}
-                <Link href={`/products/${product.id}`} className="block relative aspect-[3/4] overflow-hidden bg-gray-50">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {product.discount && (
-                    <div className="absolute top-3 left-3 bg-[#527661] text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider">
-                      {product.discount} OFF
+        {/* Product Grid — 4 columns */}
+        <div className="flex-grow pb-16">
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-16">
+              {filteredProducts.map((product) => (
+                <div key={product.id} className="group flex flex-col">
+                  <Link href={`/products/${product.id}`} className="cursor-pointer">
+                    <div
+                      className="relative aspect-[3/4] mb-4 bg-white/10 p-1 transition-transform duration-300"
+                      style={{ clipPath: 'polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%)' }}
+                    >
+                      <div
+                        className="relative w-full h-full bg-white/5 overflow-hidden"
+                        style={{ clipPath: 'polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%)' }}
+                      >
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className="object-cover object-top transition-transform duration-500 group-hover:scale-110 opacity-90 mix-blend-luminosity group-hover:mix-blend-normal group-hover:opacity-100"
+                        />
+                        {product.discount && (
+                          <div
+                            className="absolute top-0 right-0 bg-[#527661] text-white text-[10px] font-bold px-3 py-1.5 tracking-widest z-10"
+                            style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 15% 100%)' }}
+                          >
+                            {product.discount} OFF
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-
-                  {/* Ratings badge — like the screenshot */}
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-2.5 py-1 shadow-sm">
-                    <span className="text-[11px] font-mono text-black/70">0.0</span>
-                    <svg className="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                    <span className="text-[10px] text-black/40 font-mono">| 0.0</span>
-                  </div>
-
-                  {/* Color dots */}
-                  <div className="absolute bottom-3 right-3 flex items-center gap-1">
-                    {product.colors.slice(0, 3).map((c, i) => (
-                      <span
-                        key={i}
-                        className="w-3.5 h-3.5 rounded-full border border-white/60 shadow-sm"
-                        style={{ backgroundColor: getColorHex(c) }}
-                      />
-                    ))}
-                  </div>
-                </Link>
-
-                {/* Product Info */}
-                <div className="p-4">
-                  <Link href={`/products/${product.id}`}>
-                    <h3 className="text-[13px] font-semibold text-black/80 leading-tight mb-2 line-clamp-2 hover:text-[#527661] transition-colors">
-                      {product.name} | {categoryTitle}
-                    </h3>
                   </Link>
-
-                  <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-base font-bold text-[#527661] tracking-wide">
-                      TK. {product.numericPrice.toLocaleString()}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="text-xs text-black/35 line-through">
-                        TK. {product.originalPrice.replace('৳', '')}
-                      </span>
-                    )}
+                  <div className="flex flex-col text-black mt-3 h-full">
+                    <div className="flex justify-between items-start">
+                      <div className="flex flex-col">
+                        <h3 className="text-xs font-bold tracking-widest uppercase mb-1">{product.name}</h3>
+                        <span className="text-[10px] text-black/60 tracking-wider uppercase font-mono">{product.color}</span>
+                      </div>
+                      <button className="bg-[#527661] text-white p-2 rounded-full hover:bg-[#3d5a49] transition-colors shadow-sm ml-2 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="flex items-baseline space-x-3 pt-3 mt-3 border-t border-black/10">
+                      <span className="text-base text-[#527661] font-bold tracking-wider font-mono">{product.price}</span>
+                      {product.originalPrice && (
+                        <span className="text-xs text-black/40 line-through tracking-widest font-mono">{product.originalPrice}</span>
+                      )}
+                    </div>
+                    <button className="w-full mt-4 py-2.5 border border-black/15 rounded-lg text-[11px] font-bold uppercase tracking-widest text-black/70 hover:bg-[#527661] hover:text-white hover:border-[#527661] transition-all duration-300">
+                      Add To Cart
+                    </button>
                   </div>
-
-                  <button className="w-full py-2.5 border border-black/15 rounded-lg text-[12px] font-semibold uppercase tracking-wider text-black/70 hover:bg-[#527661] hover:text-white hover:border-[#527661] transition-all duration-300">
-                    Add To Cart
-                  </button>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          /* Empty state */
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-20 h-20 rounded-full bg-black/5 flex items-center justify-center mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-black/30">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
-              </svg>
+              ))}
             </div>
-            <h3 className="text-lg font-bold uppercase tracking-wide mb-2">
-              {hasActiveFilters ? 'No Matching Products' : 'Coming Soon'}
-            </h3>
-            <p className="text-sm text-black/50 font-mono max-w-sm">
-              {hasActiveFilters
-                ? 'Try adjusting your filters to find what you\'re looking for.'
-                : 'New products for this collection are on the way. Check back soon for fresh drops.'}
-            </p>
-            {hasActiveFilters && (
-              <button
-                onClick={clearAllFilters}
-                className="mt-6 text-[10px] font-mono tracking-widest uppercase text-white px-8 py-3 rounded-full bg-[#527661] hover:bg-[#3d5a49] transition-colors"
-              >
-                Clear Filters
-              </button>
-            )}
-            {!hasActiveFilters && (
-              <Link href="/" className="mt-8 text-[10px] font-mono tracking-widest uppercase text-white px-8 py-3 rounded-full bg-[#527661] hover:bg-[#3d5a49] transition-colors">
-                Browse All
-              </Link>
-            )}
-          </div>
-        )}
+          ) : (
+            /* Empty state */
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="w-20 h-20 rounded-full bg-black/5 flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-black/30">
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold uppercase tracking-wide mb-2">
+                {hasActiveFilters ? 'No Matching Products' : 'Coming Soon'}
+              </h3>
+              <p className="text-sm text-black/50 font-mono max-w-sm">
+                {hasActiveFilters
+                  ? 'Try adjusting your filters to find what you\'re looking for.'
+                  : 'New products for this collection are on the way. Check back soon for fresh drops.'}
+              </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="mt-6 text-[10px] font-mono tracking-widest uppercase text-white px-8 py-3 rounded-full bg-[#527661] hover:bg-[#3d5a49] transition-colors"
+                >
+                  Clear Filters
+                </button>
+              )}
+              {!hasActiveFilters && (
+                <Link href="/" className="mt-8 text-[10px] font-mono tracking-widest uppercase text-white px-8 py-3 rounded-full bg-[#527661] hover:bg-[#3d5a49] transition-colors">
+                  Browse All
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 /** Map color names to hex values for the dot indicators */
-function getColorHex(color: string): string {
-  const map: Record<string, string> = {
-    Multicolor: 'linear-gradient(135deg, #f00, #0f0, #00f)',
-    'Sky Blue': '#87CEEB',
-    Mint: '#98FF98',
-    Biscuit: '#D4A574',
-    'Slate Blue': '#6A5ACD',
-    'Pastel Orange': '#FFB347',
-    'Off White': '#FAF0E6',
-    Blue: '#4169E1',
-    Black: '#1a1a1a',
-    Navy: '#000080',
-    Green: '#527661',
-    Grey: '#808080',
-    White: '#f5f5f5',
-    Cream: '#FFFDD0',
-  };
-  return map[color] || '#ccc';
-}

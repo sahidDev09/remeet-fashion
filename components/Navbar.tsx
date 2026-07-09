@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRef, useCallback } from 'react';
 import gsap from 'gsap';
 
@@ -26,7 +27,7 @@ const navItems: NavItem[] = [
     href: '/category/tshirt',
     children: [
       { label: 'Dropshoulder T-Shirt', href: '/category/dropshoulder-tshirt' },
-      { label: 'Inspiro Edition', href: '/category/inspiro-edition' },
+      { label: 'reMeet Edition', href: '/category/remeet-edition' },
       { label: 'Sports T-Shirt', href: '/category/sports-tshirt' },
       { label: 'Premium Solid', href: '/category/premium-solid' },
     ],
@@ -114,9 +115,13 @@ export default function Navbar() {
     <nav className="fixed top-0 z-50 w-full px-8 py-6 bg-gradient-to-r from-green-100/90 to-white/90 backdrop-blur-md border-b border-black/5 transition-all">
       <div className="flex justify-between items-center text-black/80 text-xs font-mono tracking-widest uppercase">
         <Link href="/" className="flex-shrink-0 flex items-center">
-          <span className="text-2xl font-black tracking-tighter text-black">
-            inspiro
-          </span>
+          <Image 
+            src="/assets/remeet_pre_logo.png" 
+            alt="reMeet Logo" 
+            width={120} 
+            height={40} 
+            className="h-8 w-auto object-contain scale-[1.2] origin-left"
+          />
         </Link>
 
         <div className="hidden md:flex space-x-8 items-center">
