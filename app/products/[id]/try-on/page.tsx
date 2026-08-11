@@ -3,14 +3,18 @@ import FooterSection from '@/components/FooterSection';
 import Link from 'next/link';
 import TryOnInterface from './TryOnInterface';
 import { notFound } from 'next/navigation';
+import { products } from '@/lib/products';
+import type { Metadata } from 'next';
 
-const products = [
-  { id: 1, name: 'ESSENTIAL T-SHIRT', color: 'WHITE', price: '৳1,490', originalPrice: '৳1,990', discount: '25%', image: '/assets/tshirt1.jpg' },
-  { id: 2, name: 'OVERSIZED TEE', color: 'WASHED BLACK', price: '৳1,890', originalPrice: '৳2,290', discount: '18%', image: '/assets/tshirt2.jpg' },
-  { id: 3, name: 'GRAPHIC PRINT', color: 'VINTAGE GREY', price: '৳2,190', originalPrice: '৳2,690', discount: '18%', image: '/assets/tshirt3.jpg' },
-  { id: 4, name: 'CLASSIC CREWNECK', color: 'NAVY BLUE', price: '৳1,490', originalPrice: '৳1,990', discount: '25%', image: '/assets/tshirt4.jpg' },
-  { id: 5, name: 'HEAVYWEIGHT TEE', color: 'FOREST GREEN', price: '৳2,490', originalPrice: '৳2,990', discount: '16%', image: '/assets/tshirt5.jpg' },
-];
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const product = products.find(p => p.id === parseInt(id));
+  if (!product) return { title: 'Try-On Not Found — reMeet' };
+  return {
+    title: `Virtual Try-On: ${product.name} — reMeet`,
+    description: `Try on ${product.name} virtually using AI-powered fitting technology.`,
+  };
+}
 
 export default async function TryOnPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

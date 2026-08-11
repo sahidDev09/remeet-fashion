@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import gsap from 'gsap';
+import { useCart } from '@/context/CartContext';
 
 interface NavItem {
   label: string;
@@ -38,13 +39,16 @@ const navItems: NavItem[] = [
 ];
 
 export default function Navbar() {
+  const { totalItems, setIsCartOpen } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
+
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const closeTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const tweens = useRef<Record<string, gsap.core.Tween>>({});
 
   const openDropdown = useCallback((label: string) => {
-    // Clear any pending close timer
     if (closeTimers.current[label]) {
       clearTimeout(closeTimers.current[label]);
       delete closeTimers.current[label];
@@ -54,10 +58,7 @@ export default function Navbar() {
     const children = dropdown?.querySelectorAll('.dropdown-item');
     if (!dropdown) return;
 
-    // Kill any running tween
     tweens.current[label]?.kill();
-
-    // Make visible and animate in
     gsap.set(dropdown, { display: 'block', pointerEvents: 'auto' });
 
     tweens.current[label] = gsap.to(dropdown, {
@@ -68,7 +69,6 @@ export default function Navbar() {
       ease: 'power3.out',
     });
 
-    // Stagger animate children
     if (children && children.length > 0) {
       gsap.fromTo(
         children,
@@ -77,7 +77,6 @@ export default function Navbar() {
       );
     }
 
-    // Animate the arrow on the trigger
     const arrow = itemRefs.current[label]?.querySelector('.dropdown-arrow');
     if (arrow) {
       gsap.to(arrow, { rotation: 180, duration: 0.3, ease: 'power2.out' });
@@ -85,7 +84,6 @@ export default function Navbar() {
   }, []);
 
   const closeDropdown = useCallback((label: string) => {
-    // Delay close to allow cursor to move to dropdown
     closeTimers.current[label] = setTimeout(() => {
       const dropdown = dropdownRefs.current[label];
       if (!dropdown) return;
@@ -103,7 +101,6 @@ export default function Navbar() {
         },
       });
 
-      // Reverse arrow
       const arrow = itemRefs.current[label]?.querySelector('.dropdown-arrow');
       if (arrow) {
         gsap.to(arrow, { rotation: 0, duration: 0.25, ease: 'power2.in' });
@@ -112,80 +109,182 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="fixed top-0 z-50 w-full px-8 py-6 bg-gradient-to-r from-green-100/90 to-white/90 backdrop-blur-md border-b border-black/5 transition-all">
-      <div className="flex justify-between items-center text-black/80 text-xs font-mono tracking-widest uppercase">
-        <Link href="/" className="flex-shrink-0 flex items-center">
-          <Image 
-            src="/assets/remeet_pre_logo.png" 
-            alt="reMeet Logo" 
-            width={120} 
-            height={40} 
-            className="h-8 w-auto object-contain scale-[1.2] origin-left"
-          />
-        </Link>
-
-        <div className="hidden md:flex space-x-8 items-center">
-          {navItems.map((item) => (
-            <div
-              key={item.label}
-              className="relative"
-              onMouseEnter={() => item.children && openDropdown(item.label)}
-              onMouseLeave={() => item.children && closeDropdown(item.label)}
+    <>
+      <nav className="fixed top-0 z-50 w-full px-4 sm:px-8 py-5 bg-gradient-to-r from-green-100/90 to-white/90 backdrop-blur-md border-b border-black/5 transition-all">
+        <div className="flex justify-between items-center text-black/80 text-xs font-mono tracking-widest uppercase">
+          
+          {/* Logo & Mobile Menu Toggle */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 bg-black/5 rounded backdrop-blur-sm text-black"
+              aria-label="Toggle Navigation Menu"
             >
-              <Link
-                href={item.href}
-                ref={(el) => {
-                  if (item.children) itemRefs.current[item.label] = el;
-                }}
-                className="hover:text-[#527661] transition-colors flex items-center gap-1"
-              >
-                {item.label}
-                {item.children && (
-                  <span className="dropdown-arrow inline-block text-[10px] origin-center">⇂</span>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 )}
-              </Link>
+              </svg>
+            </button>
 
-              {item.children && (
-                <div
+            <Link href="/" className="flex-shrink-0 flex items-center">
+              <Image 
+                src="/assets/remeet_pre_logo.png" 
+                alt="reMeet Logo" 
+                width={120} 
+                height={40} 
+                className="h-7 sm:h-8 w-auto object-contain scale-[1.1] sm:scale-[1.2] origin-left"
+              />
+            </Link>
+          </div>
+
+          {/* Desktop Nav Items */}
+          <div className="hidden md:flex space-x-8 items-center">
+            {navItems.map((item) => (
+              <div
+                key={item.label}
+                className="relative"
+                onMouseEnter={() => item.children && openDropdown(item.label)}
+                onMouseLeave={() => item.children && closeDropdown(item.label)}
+              >
+                <Link
+                  href={item.href}
                   ref={(el) => {
-                    dropdownRefs.current[item.label] = el;
+                    if (item.children) itemRefs.current[item.label] = el;
                   }}
-                  className="absolute top-full left-0 pt-3 min-w-[220px] z-50"
-                  style={{ display: 'none', opacity: 0, transform: 'translateY(-8px) scaleY(0.95)', pointerEvents: 'none', transformOrigin: 'top center' }}
+                  className="hover:text-[#527661] transition-colors flex items-center gap-1"
                 >
-                  <div className="bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-black/5 py-2 overflow-hidden">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        className="dropdown-item block px-5 py-2.5 text-[11px] tracking-wider text-black/70 hover:text-[#527661] hover:bg-green-50/60 hover:pl-7 transition-all duration-200"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                  {item.label}
+                  {item.children && (
+                    <span className="dropdown-arrow inline-block text-[10px] origin-center">⇂</span>
+                  )}
+                </Link>
 
-        <div className="flex items-center space-x-4">
-          <button className="hover:text-[#527661] transition-colors p-2 bg-black/5 rounded backdrop-blur-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </button>
-          <button className="hover:text-[#527661] transition-colors p-2 bg-black/5 rounded backdrop-blur-sm relative">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-            <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-[#527661] text-white text-[8px] font-bold">
-              0
-            </span>
-          </button>
+                {item.children && (
+                  <div
+                    ref={(el) => {
+                      dropdownRefs.current[item.label] = el;
+                    }}
+                    className="absolute top-full left-0 pt-3 min-w-[220px] z-50"
+                    style={{ display: 'none', opacity: 0, transform: 'translateY(-8px) scaleY(0.95)', pointerEvents: 'none', transformOrigin: 'top center' }}
+                  >
+                    <div className="bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-black/5 py-2 overflow-hidden">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.label}
+                          href={child.href}
+                          className="dropdown-item block px-5 py-2.5 text-[11px] tracking-wider text-black/70 hover:text-[#527661] hover:bg-green-50/60 hover:pl-7 transition-all duration-200"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Action Icons */}
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <button
+              onClick={() => alert('Account login / profile modal')}
+              className="hover:text-[#527661] transition-colors p-2 bg-black/5 rounded backdrop-blur-sm"
+              title="Account"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </button>
+            
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="hover:text-[#527661] transition-colors p-2 bg-black/5 rounded backdrop-blur-sm relative"
+              title="Shopping Cart"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#527661] text-white text-[9px] font-bold shadow-sm">
+                {totalItems}
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Mobile Slide-over Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          {/* Mobile Menu Panel */}
+          <div className="relative w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col pt-24 pb-8 px-6 overflow-y-auto z-10 font-mono text-xs uppercase tracking-widest">
+            <div className="flex flex-col space-y-4">
+              {navItems.map((item) => (
+                <div key={item.label} className="border-b border-black/5 pb-3">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="font-bold text-black text-sm hover:text-[#527661]"
+                    >
+                      {item.label}
+                    </Link>
+                    {item.children && (
+                      <button
+                        onClick={() =>
+                          setExpandedMobileItem(
+                            expandedMobileItem === item.label ? null : item.label
+                          )
+                        }
+                        className="p-2 text-black/50 hover:text-black"
+                      >
+                        <svg
+                          className={`w-4 h-4 transform transition-transform ${
+                            expandedMobileItem === item.label ? 'rotate-180' : ''
+                          }`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+
+                  {item.children && expandedMobileItem === item.label && (
+                    <div className="mt-2 ml-4 flex flex-col space-y-2 border-l-2 border-[#527661]/30 pl-4 py-1">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.label}
+                          href={child.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="text-black/70 hover:text-[#527661] text-xs py-1"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto pt-8 border-t border-black/10 text-[10px] text-black/40">
+              <p>[ FROM PEAKS TO THE STREETS ]</p>
+              <p className="mt-1">remeet fashion © 2026</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

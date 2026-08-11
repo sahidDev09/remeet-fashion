@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import { CartProvider } from "@/context/CartContext";
+import CartDrawer from "@/components/CartDrawer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,10 +33,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col relative overflow-x-hidden">
         {/* Global Background Gradient */}
         <div className="fixed inset-0 -z-10 h-full w-full bg-gradient-to-br from-green-100 via-white to-green-50 pointer-events-none" />
-        <SmoothScroll>
-          {children}
-        </SmoothScroll>
+        <CartProvider>
+          <SmoothScroll>
+            {children}
+          </SmoothScroll>
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );
 }
+

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 const SparkleIcon = () => (
@@ -17,7 +18,6 @@ const Marquee = () => {
         animate={{ x: ["0%", "-50%"] }}
         transition={{ ease: "linear", duration: 15, repeat: Infinity }}
       >
-        {/* Double the content for seamless looping */}
         {[...Array(2)].map((_, i) => (
           <div key={i} className="flex items-center">
             <span>FASHION</span>
@@ -41,7 +41,7 @@ export default function FeaturedSection() {
       <Marquee />
 
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 w-full py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 auto-rows-[150px] lg:auto-rows-[250px] xl:auto-rows-[280px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 auto-rows-[220px] lg:auto-rows-[250px] xl:auto-rows-[280px]">
           
           {/* Card 1: Woman Coat */}
           <div className="col-span-1 row-span-1 md:row-span-2 relative bg-[#131313] group flex flex-col items-center justify-end overflow-hidden rounded-[24px]">
@@ -55,12 +55,11 @@ export default function FeaturedSection() {
                 priority
               />
             </div>
-            {/* Gradient overlay for text readability */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none z-10" />
             <div className="relative z-20 mb-8 w-full flex justify-center">
-              <button className="bg-[#527661] text-white px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-3/4 max-w-[200px] flex items-center justify-center gap-2">
+              <Link href="/category/winter" className="bg-[#527661] text-white px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-3/4 max-w-[200px] flex items-center justify-center gap-2">
                 Explore Now
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -76,12 +75,11 @@ export default function FeaturedSection() {
                 priority
               />
             </div>
-            {/* Gradient overlay for text readability */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none z-10" />
             <div className="relative z-20 mb-8 w-full flex justify-center">
-              <button className="bg-[#527661] text-white px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-3/4 max-w-[200px] flex items-center justify-center gap-1">
+              <Link href="/category/summer" className="bg-[#527661] text-white px-8 py-3 rounded-full text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-3/4 max-w-[200px] flex items-center justify-center gap-1">
                 Explore Now
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -96,16 +94,15 @@ export default function FeaturedSection() {
                 sizes="(max-width: 1024px) 50vw, 25vw"
               />
             </div>
-            {/* Gradient overlay for text readability on left side */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent pointer-events-none z-10" />
             <div className="relative z-20 w-full flex flex-col items-start pl-8 md:pl-12 pr-4 py-8">
-              <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/70 mb-2 md:mb-3">Woman Collection</span>
+              <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/70 mb-2 md:mb-3">T-Shirt Collection</span>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-4 md:mb-5 text-white leading-tight max-w-[250px] lg:max-w-[300px]">
                 Stylish Winter T-Shirt for Woman
               </h3>
-              <button className="bg-[#527661] text-white px-6 md:px-8 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-fit flex items-center justify-center gap-2">
+              <Link href="/category/tshirt" className="bg-[#527661] text-white px-6 md:px-8 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-fit flex items-center justify-center gap-2">
                 Check Now
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -120,16 +117,15 @@ export default function FeaturedSection() {
                 sizes="(max-width: 1024px) 50vw, 25vw"
               />
             </div>
-            {/* Gradient overlay for text readability on left side */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent pointer-events-none z-10" />
             <div className="relative z-20 w-full flex flex-col items-start pl-8 md:pl-12 pr-4 py-8">
               <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/70 mb-2 md:mb-3">Man Collection</span>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-4 md:mb-5 text-white leading-tight max-w-[250px] lg:max-w-[300px]">
                 Stylish Winter Shirt for Man
               </h3>
-              <button className="bg-[#527661] text-white px-6 md:px-8 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-fit flex items-center justify-center gap-2">
+              <Link href="/category/man" className="bg-[#527661] text-white px-6 md:px-8 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold hover:bg-[#3d5a49] transition-colors duration-300 shadow-lg w-fit flex items-center justify-center gap-2">
                 Check Now
-              </button>
+              </Link>
             </div>
           </div>
 
