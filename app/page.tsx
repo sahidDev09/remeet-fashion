@@ -1,22 +1,32 @@
+import AnnouncementBar from '@/components/AnnouncementBar';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
-import ProductList from '@/components/ProductList';
-import FooterSection from '@/components/FooterSection';
-import Elevete from '@/components/Elevete';
+import ValueProps from '@/components/ValueProps';
+import CategorySpotlight from '@/components/CategorySpotlight';
 import FeaturedSection from '@/components/FeaturedSection';
+import ProductList from '@/components/ProductList';
+import LookbookSection from '@/components/LookbookSection';
+import BrandManifesto from '@/components/BrandManifesto';
+import Elevete from '@/components/Elevete';
 import CustomerReviews from '@/components/CustomerReviews';
 import NewsletterSection from '@/components/NewsletterSection';
+import FooterSection from '@/components/FooterSection';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen selection:bg-white selection:text-black">
+    <div className="flex flex-col min-h-screen selection:bg-[#527661] selection:text-white">
+      <AnnouncementBar />
       <Navbar />
       
-      <main className="flex-grow">
+      <main className="flex-grow pt-8">
         <HeroSection />
+        <ValueProps />
+        <CategorySpotlight />
         <FeaturedSection />
         <ProductList />
-        <Elevete/>
+        <LookbookSection />
+        <BrandManifesto />
+        <Elevete />
         <CustomerReviews />
         <NewsletterSection />
       </main>
