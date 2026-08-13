@@ -1,5 +1,4 @@
 'use client';
-
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
@@ -31,9 +30,10 @@ export default function BrandManifesto() {
           className="col-span-1 md:col-span-2 row-span-2 relative rounded-[32px] overflow-hidden bg-[#131313] text-white p-8 md:p-12 flex flex-col justify-between border border-black/5 shadow-xl group"
         >
           <Image
-            src="/assets/forest_bg.png"
+            src="/forest_bg.png"
             alt="Forest Craftsmanship"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"
           />
           <div className="relative z-10">
@@ -111,9 +111,10 @@ export default function BrandManifesto() {
           className="col-span-1 md:col-span-2 row-span-1 rounded-[32px] bg-[#1a1a1a] text-white p-8 flex flex-col justify-between relative overflow-hidden group shadow-lg"
         >
           <Image
-            src="/assets/mountain_bg.png"
+            src="/mountain_bg.png"
             alt="Mountain All Weather"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover opacity-30 group-hover:scale-105 transition-transform duration-700"
           />
           <div className="relative z-10 flex justify-between items-start">

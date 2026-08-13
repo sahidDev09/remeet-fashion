@@ -73,7 +73,7 @@ export default function LookbookSection() {
       <div className="relative w-full h-[550px] md:h-[650px] rounded-[36px] overflow-hidden border border-black/10 shadow-2xl bg-[#131313]">
         {/* Main Background Look Image */}
         <Image
-          src="/assets/media__1781530242765.png"
+          src="/media__1781530242765.png"
           alt="Style Lookbook"
           fill
           priority

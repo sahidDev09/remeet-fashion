@@ -1,152 +1,306 @@
-"use client";
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const categories = [
+  { title: 'Hoodies',     href: '/category/man',            image: '/assets/cat_hoodies.png' },
+  { title: 'Outerwear',   href: '/category/winter',         image: '/assets/cat_jackets.png' },
+  { title: 'Sweatshirts', href: '/category/tshirt',         image: '/assets/cat_sweatshirts.png' },
+  { title: 'Bottoms',     href: '/category/unisex',         image: '/assets/cat_bottoms.png' },
+  { title: 'Footwear',    href: '/category/eid-collection', image: '/assets/cat_footwear.png' },
+];
 
 export default function HeroSection() {
+  const sectionRef   = useRef<HTMLElement>(null);
+  const sublabelRef  = useRef<HTMLDivElement>(null);
+  const titleRef     = useRef<HTMLHeadingElement>(null);
+  const subtitleRef  = useRef<HTMLParagraphElement>(null);
+  const ctasRef      = useRef<HTMLDivElement>(null);
+  const badgesRef    = useRef<HTMLDivElement>(null);
+  const catHeaderRef = useRef<HTMLDivElement>(null);
+  const catGridRef   = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const to = { opacity: 1, x: 0, y: 0, scale: 1, clearProps: 'all' };
+
+      // ── HERO: sub-label slides in from left ──────────────────────
+      gsap.fromTo(
+        sublabelRef.current,
+        { x: -60, opacity: 0 },
+        { ...to, duration: 0.9, ease: 'power3.out', delay: 0.1 },
+      );
+
+      // ── HERO: h1 fades + rises ────────────────────────────────────
+      gsap.fromTo(
+        titleRef.current,
+        { y: 60, opacity: 0 },
+        { ...to, duration: 1, ease: 'power4.out', delay: 0.25 },
+      );
+
+      // ── HERO: subtitle ───────────────────────────────────────────
+      gsap.fromTo(
+        subtitleRef.current,
+        { y: 30, opacity: 0 },
+        { ...to, duration: 0.8, ease: 'power3.out', delay: 0.5 },
+      );
+
+      // ── HERO: CTAs stagger ───────────────────────────────────────
+      if (ctasRef.current) {
+        gsap.fromTo(
+          Array.from(ctasRef.current.children),
+          { y: 25, opacity: 0 },
+          { ...to, duration: 0.7, stagger: 0.15, ease: 'power3.out', delay: 0.7 },
+        );
+      }
+
+      // ── HERO: badges stagger ─────────────────────────────────────
+      if (badgesRef.current) {
+        gsap.fromTo(
+          Array.from(badgesRef.current.children),
+          { y: 20, opacity: 0 },
+          { ...to, duration: 0.6, stagger: 0.1, ease: 'power2.out', delay: 0.95 },
+        );
+      }
+
+      // ── CATEGORY: header scrolls in ──────────────────────────────
+      if (catHeaderRef.current) {
+        gsap.fromTo(
+          Array.from(catHeaderRef.current.children),
+          { y: 20, opacity: 0 },
+          {
+            ...to,
+            duration: 0.4,
+            stagger: 0.05,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: catHeaderRef.current,
+              start: 'top 98%',
+              toggleActions: 'play none none none',
+            },
+          },
+        );
+      }
+
+      // ── CATEGORY: cards staggered slide-up with scale ────────────
+      if (catGridRef.current) {
+        gsap.fromTo(
+          Array.from(catGridRef.current.children),
+          { y: 30, opacity: 0, scale: 0.96 },
+          {
+            ...to,
+            duration: 0.45,
+            stagger: 0.05,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: catGridRef.current,
+              start: 'top 98%',
+              toggleActions: 'play none none none',
+            },
+          },
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative w-full min-h-screen overflow-hidden font-sans pt-20 pb-10 px-4 sm:px-8 flex flex-col items-center">
-      
-      {/* Top Text Background */}
-      <div className="w-full max-w-7xl mx-auto flex justify-between items-center relative z-10 px-4 md:px-12 pt-8 pb-4">
-        {/* Decorative brush stroke background */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] h-12 bg-[#527661]/20 rounded-full blur-xl -z-10"></div>
-        
-        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-800 tracking-tighter uppercase flex items-baseline gap-2">
-          <span className="font-serif italic font-medium lowercase text-2xl sm:text-3xl md:text-5xl">Own the</span> EDGE
-        </h1>
-        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-800 tracking-tighter uppercase flex items-baseline gap-2">
-          <span className="font-serif italic font-medium lowercase text-2xl sm:text-3xl md:text-5xl">Keep the</span> VIBE
-        </h1>
+    <section ref={sectionRef} className="relative w-full text-white overflow-hidden">
+
+      {/* ── BG IMAGE ─────────────────────────────────────────────── */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/assets/modelbg.png"
+          alt="Hero Background"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-right"
+          quality={100}
+        />
       </div>
 
-      {/* Main Green Card */}
-      <div className="relative w-full max-w-7xl mx-auto bg-[#527661] rounded-[40px] mt-8 p-8 md:p-12 min-h-[600px] flex flex-col md:flex-row justify-between items-stretch z-20">
-        
-        {/* Subtle brush stroke pattern in the background */}
-        <div className="absolute inset-0 overflow-hidden rounded-[40px] pointer-events-none opacity-20">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="brush" width="100" height="20" patternUnits="userSpaceOnUse">
-                <path d="M0,10 Q25,0 50,10 T100,10" fill="none" stroke="#ffffff" strokeWidth="8" strokeLinecap="round"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#brush)"/>
-          </svg>
-        </div>
+      {/* ── HERO CONTENT ─────────────────────────────────────────── */}
+      <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-8 pt-36 sm:pt-44 pb-20 lg:pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
-        {/* Main Subject Image - Bottom attached, top overflowing */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 -top-24 sm:-top-32 bottom-0 w-[320px] sm:w-[500px] md:w-[750px] lg:w-[900px] z-10 pointer-events-none flex justify-center items-end">
-          <div className="relative w-full h-full">
-            <Image
-              src="/assets/heroModels.png" 
-              alt="Main Model"
-              fill
-              className="object-contain object-bottom drop-shadow-2xl"
-              priority
-            />
-          </div>
-        </div>
+          {/* Left Column – Content */}
+          <div className="lg:col-span-7 flex flex-col justify-center">
 
-        {/* Left Content */}
-        <div className="relative z-30 flex flex-col justify-between max-w-sm">
-          <div>
-            <p className="text-white/90 text-sm font-semibold mb-4 tracking-wide">New Arrivals</p>
-            <h2 className="text-4xl sm:text-5xl font-bold text-white leading-[1.1] mb-6">
-              Where Art Meets<br/>your Style
-            </h2>
-            <p className="text-white/90 text-base sm:text-lg mb-8 leading-relaxed">
-              Step into the future of<br/>streetwear today.
-            </p>
-            
-            <Link 
-              href="/category/tshirt" 
-              className="bg-white text-[#527661] px-6 py-3 rounded-full font-semibold flex items-center gap-3 hover:bg-gray-50 transition-colors shadow-sm w-fit group"
+            {/* Sub-label */}
+            <div ref={sublabelRef} className="flex items-center gap-3 mb-5">
+              <span className="text-[#a3e635] font-mono font-bold uppercase tracking-[0.3em]">
+                NEW SEASON COLLECTION
+              </span>
+              <span className="h-[1px] w-10 bg-[#a3e635]/60 inline-block" />
+            </div>
+
+            {/* Main Title */}
+            <h1
+              ref={titleRef}
+              className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-[1.05] mb-6 text-white"
             >
-              New Drops
-              <span className="bg-[#527661] text-white rounded-full p-1 w-6 h-6 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                  <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+              Elevate Your <br className="hidden sm:block" />
+              Everyday{' '}
+              <Image
+                src="/assets/style.png"
+                alt="Style."
+                height={100}
+                width={300}
+                className="inline-block align-middle h-[1.5em] w-auto"
+              />
+            </h1>
+
+            {/* Subtitle */}
+            <p
+              ref={subtitleRef}
+              className="text-white/70 text-sm font-mono leading-relaxed max-w-md mb-8 tracking-wide"
+            >
+              Modern fits. Premium fabrics. <br />
+              Made to move with you.
+            </p>
+
+            {/* CTAs */}
+            <div ref={ctasRef} className="flex flex-wrap items-center gap-6 mb-12">
+              <Link
+                href="/category/man"
+                className="bg-[#a3e635] hover:bg-[#b4f92c] text-[#071912] font-black text-sm uppercase px-8 py-4 rounded-full transition-all shadow-lg shadow-[#a3e635]/25 flex items-center gap-2 hover:scale-105 cursor-pointer tracking-wider"
+              >
+                SHOP NOW
+                <svg className="w-4 h-4 stroke-[3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-              </span>
-            </Link>
+              </Link>
+
+              <button
+                onClick={() => alert('Watch Lookbook Video')}
+                className="flex items-center gap-3.5 group cursor-pointer text-left"
+              >
+                <div className="w-12 h-12 rounded-full bg-white text-[#071912] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <svg className="w-8 h-8 rounded fill-current ml-0.5" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-bold text-xs uppercase tracking-widest leading-tight group-hover:text-[#a3e635] transition-colors">
+                    Watch Lookbook
+                  </p>
+                  <p className="text-white/60 text-[10px] font-mono leading-tight mt-0.5 tracking-wider">Play Video</p>
+                </div>
+              </button>
+            </div>
+
+            {/* Feature Badges */}
+            <div ref={badgesRef} className="pt-8 border-t border-white/10 flex flex-wrap items-center gap-6 sm:gap-10 text-white/90 text-xs">
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#a3e635]">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-bold text-white text-xs uppercase tracking-widest leading-tight">Premium</p>
+                  <p className="text-white/60 text-[10px] font-mono leading-tight">Quality</p>
+                </div>
+              </div>
+
+              <div className="h-7 w-[1px] bg-white/15 hidden sm:block" />
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#a3e635]">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-bold text-white text-xs uppercase tracking-widest leading-tight">Easy Returns</p>
+                  <p className="text-white/60 text-[10px] font-mono leading-tight">7 Days</p>
+                </div>
+              </div>
+
+              <div className="h-7 w-[1px] bg-white/15 hidden sm:block" />
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#a3e635]">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-bold text-white text-xs uppercase tracking-widest leading-tight">Free Shipping</p>
+                  <p className="text-white/60 text-[10px] font-mono leading-tight">On Orders $50+</p>
+                </div>
+              </div>
+
+            </div>
           </div>
 
-          <div className="bg-white/20 backdrop-blur-md rounded-2xl p-4 mt-12 flex flex-col gap-3 w-[240px] border border-white/30">
-            <div className="flex -space-x-3">
-               {[1,2,3,4].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-[#527661] overflow-hidden bg-gray-200">
-                    <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="avatar" className="w-full h-full object-cover" />
-                  </div>
-               ))}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                  <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" />
-                </svg>
-              </span>
-              <p className="text-white text-xs font-medium leading-tight">
-                Rated 5 Stars by<br/>The Vybe Tribe
-              </p>
-            </div>
+        </div>
+      </div>
+
+      {/* ── CATEGORY SPOTLIGHT (inline, bottom of hero) ──────────── */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 pb-16 sm:pb-20">
+
+        {/* Subtle divider */}
+        <div className="w-full h-px bg-white/10 mb-10" />
+
+        {/* Header Row */}
+        <div ref={catHeaderRef} className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Shop By Category
+            </h2>
+            <span className="h-[2px] w-10 bg-[#a3e635]/60 inline-block hidden sm:inline-block" />
           </div>
+          <Link
+            href="/category/tshirt"
+            className="text-xs sm:text-sm font-semibold text-white/70 hover:text-[#a3e635] transition-colors flex items-center gap-1.5 group"
+          >
+            View All
+            <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </Link>
         </div>
 
-        {/* Right Content */}
-        <div className="relative z-30 flex flex-col justify-between items-end max-w-sm mt-12 md:mt-0">
-          
-          <div className="flex gap-6 sm:gap-8 text-white/90">
-            <div className="flex flex-col items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
-              </svg>
-              <span className="text-xs text-center font-medium">Future<br/>Threads</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385c.148.621-.531 1.114-1.075.793L12 18.57a.563.563 0 00-.546 0l-4.78 2.532c-.544.321-1.223-.172-1.075-.793l1.285-5.385a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-              </svg>
-              <span className="text-xs text-center font-medium">Unique<br/>Designs</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="text-xs text-center font-medium">Limited<br/>Drops</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center mt-12 w-[240px]">
-            <h3 className="text-white font-bold mb-4 tracking-wide">Best Selling</h3>
-            <Link href="/products/1" className="bg-white rounded-[24px] p-2 w-full shadow-xl hover:scale-105 transition-transform group cursor-pointer block">
-              <div className="rounded-[20px] overflow-hidden bg-gray-100 aspect-[4/5] relative mb-4">
-                <Image 
-                  src="/assets/hrimitaModel2.jpeg" 
-                  alt="Featured Product" 
-                  fill 
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <div className="px-2 pb-2 text-center">
-                <h4 className="text-gray-800 font-bold text-[15px]">Urban Vanguard Tee</h4>
-                <p className="text-gray-500 text-xs mt-1 mb-4">Unmatched comfort.</p>
-                <div className="flex justify-center">
-                  <div className="bg-[#527661] text-white text-sm font-semibold py-1.5 px-4 rounded-full flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                    ৳1,490 BDT
-                  </div>
+        {/* Category Cards */}
+        <div ref={catGridRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+          {categories.map((cat) => (
+            <Link
+              key={cat.title}
+              href={cat.href}
+              className="relative h-[220px] sm:h-[280px] rounded-2xl overflow-hidden border border-white/10 hover:border-[#a3e635]/50 shadow-lg transition-all duration-300 group block"
+            >
+              <Image
+                src={cat.image}
+                alt={cat.title}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+              />
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              {/* Label */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                <h3 className="text-base sm:text-lg font-extrabold text-white group-hover:text-[#a3e635] transition-colors leading-tight mb-0.5">
+                  {cat.title}
+                </h3>
+                <div className="flex items-center gap-1 text-xs text-white/70 font-medium group-hover:translate-x-1 transition-transform">
+                  <span>Shop Now</span>
+                  <span>→</span>
                 </div>
               </div>
             </Link>
-          </div>
+          ))}
         </div>
 
       </div>
-      
     </section>
   );
 }

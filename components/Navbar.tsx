@@ -2,289 +2,200 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRef, useCallback, useState } from 'react';
-import gsap from 'gsap';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
 interface NavItem {
   label: string;
   href: string;
-  children?: { label: string; href: string }[];
+  isHome?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: 'Man', href: '/category/man' },
-  { label: 'Unisex', href: '/category/unisex' },
-  {
-    label: 'Polo Shirt',
-    href: '/category/polo-shirt',
-    children: [
-      { label: 'Knitted Polo', href: '/category/knitted-polo' },
-      { label: 'Old Money Polo', href: '/category/old-money-polo' },
-    ],
-  },
-  {
-    label: 'T-Shirt',
-    href: '/category/tshirt',
-    children: [
-      { label: 'Dropshoulder T-Shirt', href: '/category/dropshoulder-tshirt' },
-      { label: 'reMeet Edition', href: '/category/remeet-edition' },
-      { label: 'Sports T-Shirt', href: '/category/sports-tshirt' },
-      { label: 'Premium Solid', href: '/category/premium-solid' },
-    ],
-  },
-  { label: 'Summer', href: '/category/summer' },
-  { label: 'Winter', href: '/category/winter' },
-  { label: 'Eid Collection', href: '/category/eid-collection' },
+  { label: 'Home', href: '/', isHome: true },
+  { label: 'Shop', href: '/category/man' },
+  { label: 'New Arrivals', href: '/category/tshirt' },
+  { label: 'Collections', href: '/category/eid-collection' },
+  { label: 'About', href: '/#about' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const { totalItems, setIsCartOpen } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [expandedMobileItem, setExpandedMobileItem] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
-  const closeTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
-  const tweens = useRef<Record<string, gsap.core.Tween>>({});
-
-  const openDropdown = useCallback((label: string) => {
-    if (closeTimers.current[label]) {
-      clearTimeout(closeTimers.current[label]);
-      delete closeTimers.current[label];
-    }
-
-    const dropdown = dropdownRefs.current[label];
-    const children = dropdown?.querySelectorAll('.dropdown-item');
-    if (!dropdown) return;
-
-    tweens.current[label]?.kill();
-    gsap.set(dropdown, { display: 'block', pointerEvents: 'auto' });
-
-    tweens.current[label] = gsap.to(dropdown, {
-      opacity: 1,
-      y: 0,
-      scaleY: 1,
-      duration: 0.35,
-      ease: 'power3.out',
-    });
-
-    if (children && children.length > 0) {
-      gsap.fromTo(
-        children,
-        { opacity: 0, x: -8 },
-        { opacity: 1, x: 0, duration: 0.3, stagger: 0.05, ease: 'power2.out', delay: 0.1 }
-      );
-    }
-
-    const arrow = itemRefs.current[label]?.querySelector('.dropdown-arrow');
-    if (arrow) {
-      gsap.to(arrow, { rotation: 180, duration: 0.3, ease: 'power2.out' });
-    }
+  useEffect(() => {
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const closeDropdown = useCallback((label: string) => {
-    closeTimers.current[label] = setTimeout(() => {
-      const dropdown = dropdownRefs.current[label];
-      if (!dropdown) return;
+  const isHomePage = pathname === '/';
+  // Navbar uses dark hero styling ONLY at the top of the homepage
+  const isDarkHeader = isHomePage && !isScrolled;
 
-      tweens.current[label]?.kill();
+  const isItemActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    if (href.startsWith('/#')) return false;
+    return pathname.startsWith(href);
+  };
 
-      tweens.current[label] = gsap.to(dropdown, {
-        opacity: 0,
-        y: -8,
-        scaleY: 0.95,
-        duration: 0.25,
-        ease: 'power2.in',
-        onComplete: () => {
-          gsap.set(dropdown, { display: 'none', pointerEvents: 'none' });
-        },
-      });
+  // Helper classes based on header mode
+  const navContainerStyle = isDarkHeader
+    ? 'bg-transparent py-3.5 sm:py-4'
+    : 'bg-white/90 backdrop-blur-xl shadow-sm py-3.5 sm:py-4';
 
-      const arrow = itemRefs.current[label]?.querySelector('.dropdown-arrow');
-      if (arrow) {
-        gsap.to(arrow, { rotation: 0, duration: 0.25, ease: 'power2.in' });
-      }
-    }, 80);
-  }, []);
+  const logoStyle = isDarkHeader ? 'brightness-0 invert' : 'brightness-0';
+
+  const iconBtnStyle = isDarkHeader
+    ? 'bg-white/10 backdrop-blur-md text-white hover:bg-white/20 shadow-sm'
+    : 'bg-black/5 backdrop-blur-md text-gray-900 hover:bg-black/10 shadow-sm';
+
+  const mobileBurgerStyle = isDarkHeader
+    ? 'bg-white/10 backdrop-blur-md text-white hover:bg-white/20'
+    : 'bg-black/5 backdrop-blur-md text-gray-900 hover:bg-black/10';
+
+  const centerCapsuleStyle = isDarkHeader
+    ? 'bg-black/30 backdrop-blur-md p-1.5 rounded-full shadow-lg'
+    : 'bg-gray-100/90 backdrop-blur-md p-1.5 rounded-full shadow-inner';
+
+  const getItemStyle = (active: boolean) => {
+    if (isDarkHeader) {
+      return active
+        ? 'bg-[#a3e635] text-[#071912] font-black shadow-md'
+        : 'text-white/80 hover:text-white hover:bg-white/15';
+    }
+    return active
+      ? 'bg-[#0d251c] text-white font-bold shadow-md'
+      : 'text-gray-700 hover:text-black hover:bg-white/80';
+  };
 
   return (
-    <>
-      <nav className="fixed top-0 z-50 w-full px-4 sm:px-8 py-5 bg-gradient-to-r from-green-100/90 to-white/90 backdrop-blur-md border-b border-black/5 transition-all">
-        <div className="flex justify-between items-center text-black/80 text-xs font-mono tracking-widest uppercase">
-          
-          {/* Logo & Mobile Menu Toggle */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 bg-black/5 rounded backdrop-blur-sm text-black"
-              aria-label="Toggle Navigation Menu"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+    <nav className={`fixed top-0 left-0 right-0 z-50 px-4 sm:px-8 transition-all duration-300 ${navContainerStyle}`}>
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        
+        {/* Left: Brand Logo & Mobile Toggle */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`md:hidden p-2 rounded-full transition-all ${mobileBurgerStyle}`}
+            aria-label="Toggle Navigation Menu"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
 
-            <Link href="/" className="flex-shrink-0 flex items-center">
-              <Image 
-                src="/assets/remeet_pre_logo.png" 
-                alt="reMeet Logo" 
-                width={120} 
-                height={40} 
-                className="h-7 sm:h-8 w-auto object-contain scale-[1.1] sm:scale-[1.2] origin-left"
-              />
-            </Link>
-          </div>
-
-          {/* Desktop Nav Items */}
-          <div className="hidden md:flex space-x-8 items-center">
-            {navItems.map((item) => (
-              <div
-                key={item.label}
-                className="relative"
-                onMouseEnter={() => item.children && openDropdown(item.label)}
-                onMouseLeave={() => item.children && closeDropdown(item.label)}
-              >
-                <Link
-                  href={item.href}
-                  ref={(el) => {
-                    if (item.children) itemRefs.current[item.label] = el;
-                  }}
-                  className="hover:text-[#527661] transition-colors flex items-center gap-1"
-                >
-                  {item.label}
-                  {item.children && (
-                    <span className="dropdown-arrow inline-block text-[10px] origin-center">⇂</span>
-                  )}
-                </Link>
-
-                {item.children && (
-                  <div
-                    ref={(el) => {
-                      dropdownRefs.current[item.label] = el;
-                    }}
-                    className="absolute top-full left-0 pt-3 min-w-[220px] z-50"
-                    style={{ display: 'none', opacity: 0, transform: 'translateY(-8px) scaleY(0.95)', pointerEvents: 'none', transformOrigin: 'top center' }}
-                  >
-                    <div className="bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-black/5 py-2 overflow-hidden">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.label}
-                          href={child.href}
-                          className="dropdown-item block px-5 py-2.5 text-[11px] tracking-wider text-black/70 hover:text-[#527661] hover:bg-green-50/60 hover:pl-7 transition-all duration-200"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Action Icons */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <button
-              onClick={() => alert('Account login / profile modal')}
-              className="hover:text-[#527661] transition-colors p-2 bg-black/5 rounded backdrop-blur-sm"
-              title="Account"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </button>
-            
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="hover:text-[#527661] transition-colors p-2 bg-black/5 rounded backdrop-blur-sm relative"
-              title="Shopping Cart"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#527661] text-white text-[9px] font-bold shadow-sm">
-                {totalItems}
-              </span>
-            </button>
-          </div>
+          <Link href="/" className="flex items-center gap-2 group">
+            <Image 
+              src="/assets/remeet_pre_logo.png" 
+              alt="reMeet Logo" 
+              width={120} 
+              height={36} 
+              className={`h-7 sm:h-8 w-auto object-contain transition-all duration-300 opacity-95 group-hover:opacity-100 ${logoStyle}`}
+            />
+          </Link>
         </div>
-      </nav>
 
-      {/* Mobile Slide-over Drawer */}
+        {/* Center: Capsule Navbar */}
+        <div className={`hidden md:flex items-center transition-all duration-300 ${centerCapsuleStyle}`}>
+          {navItems.map((item) => {
+            const active = isItemActive(item.href);
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`relative px-4 py-2 rounded-full text-xs tracking-wide transition-all duration-300 flex items-center gap-1.5 ${getItemStyle(active)}`}
+              >
+                {item.isHome && (
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                  </svg>
+                )}
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Right: Action Icon Buttons */}
+        <div className="flex items-center gap-2.5">
+          {/* Cart */}
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className={`w-10 h-10 rounded-full flex items-center justify-center relative transition-all group cursor-pointer ${iconBtnStyle}`}
+            title="Shopping Bag"
+          >
+            <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-[#a3e635] text-[#0d251c] rounded-full text-[10px] font-black flex items-center justify-center shadow-md">
+              {totalItems > 0 ? totalItems : 1}
+            </span>
+          </button>
+
+          {/* Wishlist */}
+          <button
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all group cursor-pointer ${iconBtnStyle}`}
+            title="Wishlist"
+          >
+            <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+            </svg>
+          </button>
+
+          {/* Account */}
+          <button
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all group cursor-pointer ${iconBtnStyle}`}
+            title="Account"
+          >
+            <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden flex">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-50 md:hidden flex">
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
-
-          {/* Mobile Menu Panel */}
-          <div className="relative w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col pt-24 pb-8 px-6 overflow-y-auto z-10 font-mono text-xs uppercase tracking-widest">
+          <div className="relative w-4/5 max-w-sm bg-[#0d251c] text-white h-full shadow-2xl flex flex-col pt-20 pb-8 px-6 overflow-y-auto z-10">
             <div className="flex flex-col space-y-4">
-              {navItems.map((item) => (
-                <div key={item.label} className="border-b border-black/5 pb-3">
-                  <div className="flex items-center justify-between">
-                    <Link
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="font-bold text-black text-sm hover:text-[#527661]"
-                    >
-                      {item.label}
-                    </Link>
-                    {item.children && (
-                      <button
-                        onClick={() =>
-                          setExpandedMobileItem(
-                            expandedMobileItem === item.label ? null : item.label
-                          )
-                        }
-                        className="p-2 text-black/50 hover:text-black"
-                      >
-                        <svg
-                          className={`w-4 h-4 transform transition-transform ${
-                            expandedMobileItem === item.label ? 'rotate-180' : ''
-                          }`}
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-
-                  {item.children && expandedMobileItem === item.label && (
-                    <div className="mt-2 ml-4 flex flex-col space-y-2 border-l-2 border-[#527661]/30 pl-4 py-1">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.label}
-                          href={child.href}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="text-black/70 hover:text-[#527661] text-xs py-1"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-auto pt-8 border-t border-black/10 text-[10px] text-black/40">
-              <p>[ FROM PEAKS TO THE STREETS ]</p>
-              <p className="mt-1">remeet fashion © 2026</p>
+              {navItems.map((item) => {
+                const active = isItemActive(item.href);
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`text-sm font-semibold py-2.5 border-b border-white/10 transition-colors flex items-center justify-between ${
+                      active ? 'text-[#a3e635]' : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    {item.isHome && <span className="text-xs">🏠</span>}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
       )}
-    </>
+    </nav>
   );
 }

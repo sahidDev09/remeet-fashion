@@ -1,4 +1,4 @@
-import AnnouncementBar from '@/components/AnnouncementBar';
+
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import ValueProps from '@/components/ValueProps';
@@ -15,13 +15,10 @@ import FooterSection from '@/components/FooterSection';
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen selection:bg-[#527661] selection:text-white">
-      <AnnouncementBar />
       <Navbar />
       
-      <main className="flex-grow pt-8">
+      <main className="flex-grow">
         <HeroSection />
-        <ValueProps />
-        <CategorySpotlight />
         <FeaturedSection />
         <ProductList />
         <LookbookSection />

@@ -12,6 +12,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
+.font-script {
+  font-family: var(--font-caveat), cursive;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #ffffff;
