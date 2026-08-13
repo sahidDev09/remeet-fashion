@@ -117,7 +117,7 @@ export default function HeroSection() {
       {/* ── BG IMAGE ─────────────────────────────────────────────── */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/assets/modelbg.png"
+          src="/assets/hero_background.png"
           alt="Hero Background"
           fill
           priority
