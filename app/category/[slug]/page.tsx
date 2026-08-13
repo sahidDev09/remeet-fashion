@@ -1,6 +1,6 @@
-import Navbar from '@/components/Navbar';
-import CategoryContent from '@/components/CategoryContent';
-import FooterSection from '@/components/FooterSection';
+import Navbar from '@/components/common/Navbar';
+import CategoryContent from '@/components/category/CategoryContent';
+import FooterSection from '@/components/common/FooterSection';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getProductsByCategory, getCategoryInfo } from '@/lib/products';

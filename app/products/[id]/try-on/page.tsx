@@ -1,7 +1,7 @@
-import Navbar from '@/components/Navbar';
-import FooterSection from '@/components/FooterSection';
+import Navbar from '@/components/common/Navbar';
+import FooterSection from '@/components/common/FooterSection';
 import Link from 'next/link';
-import TryOnInterface from './TryOnInterface';
+import TryOnInterface from '@/components/try-on/TryOnInterface';
 import { notFound } from 'next/navigation';
 import { products } from '@/lib/products';
 import type { Metadata } from 'next';

@@ -1,6 +1,6 @@
-import Navbar from '@/components/Navbar';
-import FooterSection from '@/components/FooterSection';
-import ProductDetailsClient from './ProductDetailsClient';
+import Navbar from '@/components/common/Navbar';
+import FooterSection from '@/components/common/FooterSection';
+import ProductDetailsClient from '@/components/product/ProductDetailsClient';
 import { notFound } from 'next/navigation';
 import { products } from '@/lib/products';
 import type { Metadata } from 'next';

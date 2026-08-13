@@ -1,16 +1,13 @@
-
-import Navbar from '@/components/Navbar';
-import HeroSection from '@/components/HeroSection';
-import ValueProps from '@/components/ValueProps';
-import CategorySpotlight from '@/components/CategorySpotlight';
-import FeaturedSection from '@/components/FeaturedSection';
-import ProductList from '@/components/ProductList';
-import LookbookSection from '@/components/LookbookSection';
-import BrandManifesto from '@/components/BrandManifesto';
-import Elevete from '@/components/Elevete';
-import CustomerReviews from '@/components/CustomerReviews';
-import NewsletterSection from '@/components/NewsletterSection';
-import FooterSection from '@/components/FooterSection';
+import Navbar from '@/components/common/Navbar';
+import HeroSection from '@/components/home/HeroSection';
+import FeaturedSection from '@/components/home/FeaturedSection';
+import ProductList from '@/components/home/ProductList';
+import LookbookSection from '@/components/home/LookbookSection';
+import BrandManifesto from '@/components/home/BrandManifesto';
+import Elevete from '@/components/home/Elevete';
+import CustomerReviews from '@/components/home/CustomerReviews';
+import NewsletterSection from '@/components/home/NewsletterSection';
+import FooterSection from '@/components/common/FooterSection';
 
 export default function Home() {
   return (
