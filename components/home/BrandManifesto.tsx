@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function BrandManifesto() {
   return (
-    <section className="py-20 px-4 sm:px-8 max-w-[1600px] mx-auto border-t border-black/10">
+    <section id="about" className="py-20 px-4 sm:px-8 max-w-[1600px] mx-auto border-t border-black/10">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#527661] mb-3 block">

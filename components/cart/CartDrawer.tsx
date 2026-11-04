@@ -76,7 +76,7 @@ export default function CartDrawer() {
                 Your cart is empty
               </p>
               <p className="text-xs text-black/50 font-mono mb-6">
-                Looks like you haven't added anything yet.
+                Looks like you haven&apos;t added anything yet.
               </p>
               <button
                 onClick={() => setIsCartOpen(false)}
@@ -178,9 +178,10 @@ export default function CartDrawer() {
               </div>
             </div>
 
-            <button
-              onClick={() => alert('Checkout initiated!')}
-              className="w-full bg-[#131313] hover:bg-[#527661] text-white font-bold text-xs uppercase tracking-widest py-4 rounded-full transition-colors shadow-lg shadow-black/10 flex items-center justify-center gap-2"
+            <Link
+              href="/checkout"
+              onClick={() => setIsCartOpen(false)}
+              className="w-full bg-[#131313] hover:bg-[#527661] text-white font-bold text-xs uppercase tracking-widest py-4 rounded-full transition-colors shadow-lg shadow-black/10 flex items-center justify-center gap-2 text-center"
             >
               Checkout Now
               <svg
@@ -192,7 +193,7 @@ export default function CartDrawer() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-            </button>
+            </Link>
           </div>
         )}
       </div>

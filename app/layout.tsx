@@ -3,7 +3,9 @@ import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/common/SmoothScroll";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import CartDrawer from "@/components/cart/CartDrawer";
+import WishlistDrawer from "@/components/wishlist/WishlistDrawer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,10 +41,13 @@ export default function RootLayout({
         {/* Global Background Gradient */}
         <div className="fixed inset-0 -z-10 h-full w-full bg-gradient-to-br from-green-100 via-white to-green-50 pointer-events-none" />
         <CartProvider>
-          <SmoothScroll>
-            {children}
-          </SmoothScroll>
-          <CartDrawer />
+          <WishlistProvider>
+            <SmoothScroll>
+              {children}
+            </SmoothScroll>
+            <CartDrawer />
+            <WishlistDrawer />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

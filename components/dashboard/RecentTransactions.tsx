@@ -8,8 +8,20 @@ interface RecentTransactionsProps {
   searchQuery: string;
 }
 
+export interface Transaction {
+  id: string;
+  customer: string;
+  email: string;
+  avatar: string;
+  location: string;
+  item: string;
+  date: string;
+  amount: string;
+  status: string;
+}
+
 export default function RecentTransactions({ searchQuery }: RecentTransactionsProps) {
-  const [selectedTransaction, setSelectedTransaction] = useState<any | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
   const transactions = [
     {
@@ -101,7 +113,7 @@ export default function RecentTransactions({ searchQuery }: RecentTransactionsPr
             {filteredTransactions.length === 0 ? (
               <tr>
                 <td colSpan={5} className="py-6 text-center text-gray-400 font-mono text-xs">
-                  No transactions matching search "{searchQuery}"
+                  No transactions matching search &quot;{searchQuery}&quot;
                 </td>
               </tr>
             ) : (

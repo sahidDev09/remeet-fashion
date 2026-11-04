@@ -4,9 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { products } from '@/lib/products';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 
 export default function ProductList() {
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   return (
     <section id="products" className="py-10 border-t border-black/10">
@@ -73,23 +75,39 @@ export default function ProductList() {
                       </Link>
                       <span className="text-[10px] text-black/60 tracking-wider uppercase font-mono">{product.color}</span>
                     </div>
-                    <button 
-                      onClick={() => addToCart({
-                        id: product.id,
-                        name: product.name,
-                        color: product.color,
-                        price: product.price,
-                        numericPrice: product.numericPrice,
-                        image: product.image,
-                        size: product.sizes[0] || 'M',
-                      })}
-                      title="Add to Cart"
-                      className="bg-[#527661] text-white p-2 rounded-full hover:bg-[#3d5a49] transition-colors shadow-sm ml-2 shrink-0 active:scale-95"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
+                    <div className="flex items-center gap-1.5 ml-2 shrink-0">
+                      <button 
+                        onClick={() => toggleWishlist(product)}
+                        title={isInWishlist(product.id) ? "Remove from Wishlist" : "Save to Wishlist"}
+                        className={`p-2 rounded-full transition-colors ${
+                          isInWishlist(product.id)
+                            ? 'bg-red-50 text-red-500'
+                            : 'bg-black/5 text-black/40 hover:text-red-500 hover:bg-black/10'
+                        }`}
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill={isInWishlist(product.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                        </svg>
+                      </button>
+
+                      <button 
+                        onClick={() => addToCart({
+                          id: product.id,
+                          name: product.name,
+                          color: product.color,
+                          price: product.price,
+                          numericPrice: product.numericPrice,
+                          image: product.image,
+                          size: product.sizes[0] || 'M',
+                        })}
+                        title="Add to Cart"
+                        className="bg-[#527661] text-white p-2 rounded-full hover:bg-[#3d5a49] transition-colors shadow-sm active:scale-95"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-baseline space-x-3 pt-3 mt-3 border-t border-black/10">

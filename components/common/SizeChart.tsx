@@ -9,10 +9,11 @@ export default function SizeChart() {
   const toCm = (inch: number) => (inch * 2.54).toFixed(1);
 
   const measurements = [
+    { size: 'S', chest: 37.5, length: 26.5, sleeve: 8.0 },
     { size: 'M', chest: 39, length: 27.5, sleeve: 8.5 },
     { size: 'L', chest: 40.5, length: 28, sleeve: 8.75 },
-    { size: 'XL', chest: 43, length: 29, sleeve: 9 },
-    { size: '2XL', chest: 45, length: 30, sleeve: 9.25 },
+    { size: 'XL', chest: 43, length: 29, sleeve: 9.0 },
+    { size: 'XXL', chest: 45, length: 30, sleeve: 9.25 },
   ];
 
   return (

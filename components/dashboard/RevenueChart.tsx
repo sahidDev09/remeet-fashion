@@ -35,7 +35,7 @@ export default function RevenueChart({ timeRange }: RevenueChartProps) {
             </h3>
           </div>
           <p className="text-[11px] font-mono mt-0.5 text-gray-400">
-            of the week on website and compared with e-commerce
+            of the week on website and compared with e-commerce • {timeRange}
           </p>
         </div>
 

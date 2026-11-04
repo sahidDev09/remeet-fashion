@@ -8,16 +8,37 @@ export default function NewsletterSection() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes("@")) {
       setStatus("error");
       setTimeout(() => setStatus("idle"), 3000);
       return;
     }
-    setStatus("success");
-    setEmail("");
-    setTimeout(() => setStatus("idle"), 5000);
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+        setTimeout(() => setStatus("idle"), 5000);
+      } else {
+        setStatus("error");
+        setTimeout(() => setStatus("idle"), 3000);
+      }
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -148,9 +169,10 @@ export default function NewsletterSection() {
 
               <button
                 type="submit"
-                className="flex-shrink-0 bg-[#527661] hover:bg-[#3d5a49] text-white text-sm font-semibold px-6 md:px-8 py-3 rounded-full mr-1.5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(82,118,97,0.25)] active:scale-95 flex items-center gap-2"
+                disabled={loading}
+                className="flex-shrink-0 bg-[#527661] hover:bg-[#3d5a49] disabled:opacity-50 text-white text-sm font-semibold px-6 md:px-8 py-3 rounded-full mr-1.5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(82,118,97,0.25)] active:scale-95 flex items-center gap-2 cursor-pointer"
               >
-                Subscribe
+                {loading ? "Joining..." : "Subscribe"}
                 <svg
                   className="w-4 h-4"
                   fill="none"

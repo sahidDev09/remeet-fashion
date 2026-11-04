@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ProductGallery from '@/components/product/ProductGallery';
 import SizeChart from '@/components/common/SizeChart';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import type { Product } from '@/types/product';
 
 interface ProductDetailsClientProps {
@@ -15,9 +16,10 @@ interface ProductDetailsClientProps {
 
 export default function ProductDetailsClient({ product, relatedProducts }: ProductDetailsClientProps) {
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || 'M');
   const [openAccordion, setOpenAccordion] = useState<'desc' | 'shipping' | null>('desc');
-  const [isWishlist, setIsWishlist] = useState<boolean>(false);
+  const isWishlisted = isInWishlist(product.id);
 
   const handleAddToCart = () => {
     addToCart({
@@ -52,7 +54,10 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           
           {/* Images Gallery Component */}
-          <ProductGallery images={[product.image, product.image, product.image]} alt={product.name} />
+          <ProductGallery 
+            images={product.images && product.images.length > 0 ? product.images : [product.image, '/images/products/tshirt2.jpg', '/images/products/tshirt3.jpg']} 
+            alt={product.name} 
+          />
 
           {/* Product Info */}
           <div className="flex flex-col py-4">
@@ -120,15 +125,15 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
               </Link>
 
               <button 
-                onClick={() => setIsWishlist(!isWishlist)}
+                onClick={() => toggleWishlist(product)}
                 className={`w-14 h-14 shrink-0 border rounded-full flex items-center justify-center transition-all ${
-                  isWishlist 
+                  isWishlisted 
                     ? 'bg-red-50 border-red-200 text-red-500' 
                     : 'border-black/10 bg-white/50 text-black hover:bg-white hover:border-black/30'
                 }`}
-                title="Wishlist"
+                title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill={isWishlist ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
               </button>
             </div>
 
@@ -285,11 +290,11 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                   <span className="text-xs font-mono text-black/40">Verified Buyer</span>
                 </div>
                 <p className="text-black/70 leading-relaxed font-mono text-sm">
-                  "Absolutely love this piece! The fabric feels premium, weight is heavy enough for structure, and the virtual try-on accurately predicted the fit. Will order again!"
+                  &quot;Absolutely love this piece! The fabric feels premium, weight is heavy enough for structure, and the virtual try-on accurately predicted the fit. Will order again!&quot;
                 </p>
                 <div className="mt-2">
                   <div className="w-12 h-12 rounded-full overflow-hidden relative border-2 border-white shadow-sm">
-                    <Image src="/assets/tshirt1.jpg" fill className="object-cover" alt="Reviewer" sizes="48px" />
+                    <Image src="/images/products/tshirt1.jpg" fill className="object-cover" alt="Reviewer" sizes="48px" />
                   </div>
                 </div>
               </div>

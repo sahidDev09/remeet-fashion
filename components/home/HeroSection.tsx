@@ -9,11 +9,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const categories = [
-  { title: 'Hoodies',     href: '/category/man',            image: '/images/home/categories/cat_hoodies.png' },
-  { title: 'Outerwear',   href: '/category/winter',         image: '/images/home/categories/cat_jackets.png' },
-  { title: 'Sweatshirts', href: '/category/tshirt',         image: '/images/home/categories/cat_sweatshirts.png' },
-  { title: 'Bottoms',     href: '/category/unisex',         image: '/images/home/categories/cat_bottoms.png' },
-  { title: 'Footwear',    href: '/category/eid-collection', image: '/images/home/categories/cat_footwear.png' },
+  { title: 'Streetwear',  href: '/category/man',            image: '/images/home/categories/cat_hoodies.png' },
+  { title: 'Winter Tees', href: '/category/winter',         image: '/images/home/categories/cat_jackets.png' },
+  { title: 'T-Shirts',    href: '/category/tshirt',         image: '/images/home/categories/cat_sweatshirts.png' },
+  { title: 'Polo Shirts', href: '/category/polo-shirt',     image: '/images/home/categories/cat_bottoms.png' },
+  { title: 'Eid Edition', href: '/category/eid-collection', image: '/images/home/categories/cat_footwear.png' },
 ];
 
 export default function HeroSection() {

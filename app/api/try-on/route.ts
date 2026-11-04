@@ -322,6 +322,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       resultUrl,
+      taskId,
     });
 
   } catch (error: unknown) {
@@ -336,5 +337,52 @@ export async function POST(req: Request) {
       },
       { status: 500 },
     );
+  }
+}
+
+/**
+ * GET: Check status of an existing try-on task
+ */
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const taskId = searchParams.get('taskId');
+    const YOUCAM_API_KEY = process.env.YOUCAM_API_KEY;
+
+    if (!YOUCAM_API_KEY) {
+      return NextResponse.json({ success: false, error: 'API key not configured' }, { status: 500 });
+    }
+
+    if (!taskId) {
+      return NextResponse.json({ success: false, error: 'taskId is required' }, { status: 400 });
+    }
+
+    const response = await fetch(`${BASE_URL}${TASK_ENDPOINT}/${encodeURIComponent(taskId)}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${YOUCAM_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return NextResponse.json({ success: false, error: errorText }, { status: response.status });
+    }
+
+    const data: TaskStatusResponse = await response.json();
+    const status = data.data?.task_status;
+    const resultUrl = data.data?.results?.url;
+    const error = data.data?.error;
+
+    return NextResponse.json({
+      success: true,
+      status,
+      resultUrl,
+      error: error ? getUserFriendlyError(error) : null,
+    });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
   }
 }

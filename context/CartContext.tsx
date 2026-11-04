@@ -34,15 +34,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    try {
-      const savedCart = localStorage.getItem('remeet_cart');
-      if (savedCart) {
-        setCart(JSON.parse(savedCart));
+    const timer = setTimeout(() => {
+      try {
+        const savedCart = localStorage.getItem('remeet_cart');
+        if (savedCart) {
+          setCart(JSON.parse(savedCart));
+        }
+      } catch (e) {
+        console.error('Failed to load cart from storage', e);
       }
-    } catch (e) {
-      console.error('Failed to load cart from storage', e);
-    }
-    setIsLoaded(true);
+      setIsLoaded(true);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Save cart to localStorage on change

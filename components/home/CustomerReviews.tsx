@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 import type { Review } from '@/types/review';
@@ -152,10 +153,12 @@ const ReviewCard = ({
 
       {/* Author */}
       <div className="relative z-10 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#527661]/30 flex-shrink-0">
-          <img
+        <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#527661]/30 flex-shrink-0 relative">
+          <Image
             src={review.avatar}
             alt={review.name}
+            fill
+            sizes="40px"
             className="w-full h-full object-cover"
           />
         </div>

@@ -29,7 +29,7 @@ const STAGE_MESSAGES: Record<ProcessingStage, string> = {
   error: 'Something went wrong.',
 };
 
-export default function TryOnInterface({ initialProduct }: TryOnInterfaceProps) {
+export default function TryOnInterface({ initialProduct, allProducts = [] }: TryOnInterfaceProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product>(initialProduct);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -169,8 +169,34 @@ export default function TryOnInterface({ initialProduct }: TryOnInterfaceProps) 
           </div>
           <div className="text-center">
             <p className="text-xs font-bold uppercase tracking-widest">{selectedProduct.name}</p>
-            <p className="text-[10px] text-black/40 font-mono mt-0.5">{selectedProduct.color}</p>
+            <p className="text-[10px] text-black/40 font-mono mt-0.5">{selectedProduct.color} • {selectedProduct.price}</p>
           </div>
+
+          {/* Garment Picker Carousel */}
+          {allProducts && allProducts.length > 0 && (
+            <div className="mt-2 pt-3 border-t border-black/5">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-black/40 mb-2">
+                Switch Garment ({allProducts.length})
+              </p>
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                {allProducts.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSelectedProduct(p)}
+                    className={`relative w-12 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
+                      selectedProduct.id === p.id
+                        ? 'border-[#527661] scale-105 shadow-sm'
+                        : 'border-black/10 opacity-60 hover:opacity-100 hover:border-black/30'
+                    }`}
+                    title={`${p.name} (${p.color})`}
+                  >
+                    <Image src={p.image} alt={p.name} fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-8 flex-grow">

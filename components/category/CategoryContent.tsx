@@ -283,7 +283,7 @@ export default function CategoryContent({ products, categoryTitle }: CategoryCon
         {/* Sort bar */}
         <div className="flex items-center justify-between mb-8 flex-shrink-0">
           <p className="text-xs font-mono tracking-wider text-black/40 uppercase hidden md:block">
-            {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
+            Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} in {categoryTitle}
           </p>
           <div className="flex items-center gap-3 ml-auto">
             <span className="text-xs font-mono tracking-wider text-black/50 uppercase hidden sm:inline">

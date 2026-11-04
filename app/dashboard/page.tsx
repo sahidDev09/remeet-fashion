@@ -21,9 +21,13 @@ export default function DashboardPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Check session auth state on client
-    const authSession = sessionStorage.getItem('remeet_dashboard_authenticated');
-    setIsAuthenticated(authSession === 'true');
+    // Check session auth state on client asynchronously after mount
+    const timer = setTimeout(() => {
+      const authSession = sessionStorage.getItem('remeet_dashboard_authenticated');
+      setIsAuthenticated(authSession === 'true');
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleLogout = () => {
